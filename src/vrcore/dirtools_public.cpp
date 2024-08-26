@@ -2,6 +2,7 @@
 #include <vrcore/dirtools_public.h>
 #include <vrcore/strtools_public.h>
 #include <vrcore/pathtools_public.h>
+#include <config.h>
 
 #include <errno.h>
 #include <string.h>
