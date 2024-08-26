@@ -1,17 +1,20 @@
 //========= Copyright Valve Corporation ============//
 
+#undef GetEnvironmentVariable
+#undef SetEnvironmentVariable
+
 #include <vrcore/vrpathregistry_public.h>
 #include <json/json.h>
 #include <vrcore/pathtools_public.h>
 #include <vrcore/envvartools_public.h>
 #include <vrcore/strtools_public.h>
 #include <vrcore/dirtools_public.h>
+#include <config.h>
 
 #if defined( WIN32 )
 #include <windows.h>
 #include <shlobj.h>
 
-#undef GetEnvironmentVariable
 #elif defined OSX
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
@@ -111,21 +114,22 @@ CVRPathRegistry_Public::CVRPathRegistry_Public()
 // ---------------------------------------------------------------------------
 std::string CVRPathRegistry_Public::GetOpenVRConfigPath()
 {
-	std::string sConfigPath = GetAppSettingsPath();
-	if( sConfigPath.empty() )
-		return "";
+    std::string sConfigPath = GetAppSettingsPath();
+    if (sConfigPath.empty())
+        return "";
 
-#if defined( _WIN32 ) || defined( LINUX )
-	sConfigPath = Path_Join( sConfigPath, "openvr" );
-#elif defined ( OSX ) 
-	sConfigPath = Path_Join( sConfigPath, ".openvr" );
+#if defined(_WIN32) || defined(LINUX)
+    sConfigPath = Path_Join(sConfigPath, "openvr");
+#elif defined(OSX)
+    sConfigPath = Path_Join(sConfigPath, ".openvr");
 #else
-	#warning "Unsupported platform"
+    #warning "Unsupported platform"
+    return ""; // Return an empty string for unsupported platforms
 #endif
-	sConfigPath = Path_FixSlashes( sConfigPath );
-	return sConfigPath;
-}
 
+    sConfigPath = Path_FixSlashes(sConfigPath);
+    return sConfigPath;
+}
 
 
 //-----------------------------------------------------------------------------
