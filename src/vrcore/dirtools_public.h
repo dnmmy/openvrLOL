@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <string>
-
+#include <config.h>
 
 #if !defined(_WIN32)
 #include <sys/types.h>
