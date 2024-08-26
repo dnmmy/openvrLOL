@@ -4,6 +4,11 @@ project(openvr_api)
 set( LIBNAME "openvr_api" )
 set(OPENVR_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../headers)
 
+# Define POSIX for Unix-like systems
+if(UNIX AND NOT APPLE)
+    add_definitions(-DPOSIX)
+endif()
+
 # Set some properies for specific files.
 if(APPLE)
   set(CMAKE_MACOSX_RPATH 1)
@@ -24,6 +29,9 @@ endif()
 
 # Add include folders.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../headers ${CMAKE_CURRENT_SOURCE_DIR}/vrcore)
+message(STATUS "Include directories: ${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_SOURCE_DIR}/../headers;${CMAKE_CURRENT_SOURCE_DIR}/vrcore")
+
+
 
 if(USE_CUSTOM_LIBCXX)
 	link_directories(
@@ -94,6 +102,12 @@ elseif(BUILD_FRAMEWORK)
 	)
 else()
 	add_library(${LIBNAME} STATIC ${SOURCE_FILES})
+
+	target_include_directories(${LIBNAME} PUBLIC 
+    		${CMAKE_CURRENT_SOURCE_DIR}
+    		${CMAKE_CURRENT_SOURCE_DIR}/../headers
+    		${CMAKE_CURRENT_SOURCE_DIR}/vrcore )
+
 endif()
 
 if(USE_CUSTOM_LIBCXX)
