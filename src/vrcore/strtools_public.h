@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <vector>
+#include <config.h>
 
 /** returns true if the string has the prefix */
 bool StringHasPrefix( const std::string & sString, const std::string & sPrefix );
