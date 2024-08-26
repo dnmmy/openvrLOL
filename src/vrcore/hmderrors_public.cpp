@@ -3,6 +3,7 @@
 #include "hmderrors_public.h"
 #include <stdio.h>
 #include <algorithm>
+#include <config.h>
 
 using namespace vr;
 
@@ -370,4 +371,3 @@ const char *GetIDForVRInitError( vr::EVRInitError eError )
 		}
 	}
 }
-
