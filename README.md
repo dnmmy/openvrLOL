@@ -1,4 +1,4 @@
-OpenVR SDK
+OpenVR SDK OpenVR SDK that actually compiles on linux
 ---
 
 OpenVR is an API and runtime that allows access to VR hardware from multiple
@@ -23,3 +23,10 @@ Current documentation for the Driver API can be found in [docs/Driver_API_Docume
 ### About
 
 More information on OpenVR and SteamVR can be found on https://steamvr.com
+
+OpenVR SDK OpenVR SDK that actually compiles on linux 
+
+              
+              how to build from src
+
+  cd src; mkdir _build; cd _build; cmake ..; make
