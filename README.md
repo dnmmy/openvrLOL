@@ -26,7 +26,4 @@ More information on OpenVR and SteamVR can be found on https://steamvr.com
 
 OpenVR SDK OpenVR SDK that actually compiles on linux 
 
-              
-              how to build from src
-
   cd src; mkdir _build; cd _build; cmake ..; make
