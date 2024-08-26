@@ -1,6 +1,10 @@
 //========= Copyright Valve Corporation ============//
 #include <vrcore/strtools_public.h>
 #include <vrcore/pathtools_public.h>
+#include <config.h>
+#include <cstring>
+#include <strings.h>
+#include <cassert>
 
 #if defined( _WIN32)
 #include <windows.h>
@@ -23,7 +27,7 @@
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 #include <mach-o/dyld.h>
-#define _S_IFDIR S_IFDIR     // really from tier0/platform.h which we dont have yet
+#define S_IFDIR     // really from tier0/platform.h which we dont have yet
 #endif
 
 #include <sys/stat.h>
@@ -54,20 +58,17 @@ std::string Path_GetExecutablePath()
 		return "";
 #elif defined LINUX
 	char rchPath[1024];
-	size_t nBuff = sizeof( rchPath );
-	ssize_t nRead = readlink("/proc/self/exe", rchPath, nBuff-1 );
-	if ( nRead != -1 )
-	{
-		rchPath[ nRead ] = 0;
-		return rchPath;
-	}
-	else
-	{
-		return "";
-	}
+    size_t nBuff = sizeof(rchPath);
+    ssize_t nRead = readlink("/proc/self/exe", rchPath, nBuff - 1);
+    if (nRead != -1) {
+        rchPath[nRead] = '\0';  // Null-terminate the string
+        return std::string(rchPath);  // Convert to std::string before returning
+    } else {
+        return "";  // Return an empty string if readlink fails
+    }
 #else
-	AssertMsg( false, "Implement Plat_GetExecutablePath" );
-	return "";
+    assert(false && "Implement Plat_GetExecutablePath");
+    return ""; 
 #endif
 
 }
@@ -419,7 +420,7 @@ bool Path_IsSamePath( const std::string & sPath1, const std::string & sPath2 )
 	std::string sCompact1 = Path_Compact( sPath1 );
 	std::string sCompact2 = Path_Compact( sPath2 );
 #if defined(WIN32)
-	return !stricmp( sCompact1.c_str(), sCompact2.c_str() );
+	return !strcasecmp( sCompact1.c_str(), sCompact2.c_str() );
 #else
 	return !strcmp( sCompact1.c_str(), sCompact2.c_str() );
 #endif
@@ -477,7 +478,7 @@ bool Path_IsDirectory( const std::string & sPath )
 #if defined( LINUX ) || defined( OSX )
 	return S_ISDIR( buf.st_mode );
 #else
-	return (buf.st_mode & _S_IFDIR) != 0;
+	return (buf.st_mode & S_IFDIR) != 0;
 #endif
 
 #else
@@ -488,7 +489,7 @@ bool Path_IsDirectory( const std::string & sPath )
 		return false;
 	}
 
-	return (buf.st_mode & _S_IFDIR) != 0;
+	return (buf.st_mode & S_IFDIR) != 0;
 #endif
 }
 
@@ -546,7 +547,7 @@ std::string Path_FindParentDirectoryRecursively( const std::string &strStartDire
 
 	bool bExists = Path_Exists( strCurrentPath );
 	std::string strCurrentDirectoryName = Path_StripDirectory( strCurrentPath );
-	if ( bExists && stricmp( strCurrentDirectoryName.c_str(), strDirectoryName.c_str() ) == 0 )
+	if ( bExists && strcasecmp( strCurrentDirectoryName.c_str(), strDirectoryName.c_str() ) == 0 )
 		return strCurrentPath;
 
 	while( bExists && strCurrentPath.length() != 0 )
@@ -554,7 +555,7 @@ std::string Path_FindParentDirectoryRecursively( const std::string &strStartDire
 		strCurrentPath = Path_StripFilename( strCurrentPath );
 		strCurrentDirectoryName = Path_StripDirectory( strCurrentPath );
 		bExists = Path_Exists( strCurrentPath );
-		if ( bExists && stricmp( strCurrentDirectoryName.c_str(), strDirectoryName.c_str() ) == 0 )
+		if ( bExists && strcasecmp( strCurrentDirectoryName.c_str(), strDirectoryName.c_str() ) == 0 )
 			return strCurrentPath;
 	}
 
@@ -885,7 +886,7 @@ std::string Path_FilePathToUrl( const std::string & sRelativePath, const std::st
 // -----------------------------------------------------------------------------------------------------
 std::string Path_UrlToFilePath( const std::string & sFileUrl )
 {
-	if ( !strnicmp( sFileUrl.c_str(), FILE_URL_PREFIX, strlen( FILE_URL_PREFIX ) ) )
+	if ( !strncasecmp( sFileUrl.c_str(), FILE_URL_PREFIX, strlen( FILE_URL_PREFIX ) ) )
 	{
 		char *pchBuffer = (char *)alloca( sFileUrl.length() );
 		V_URLDecodeNoPlusForSpace( pchBuffer, (int)sFileUrl.length(), 
@@ -1068,4 +1069,3 @@ bool Path_DeleteDirectory( const std::string &sDirectoryPath, bool bDeleteSubdir
 	return false;
 #endif
 }
-
