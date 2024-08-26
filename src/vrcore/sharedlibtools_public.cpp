@@ -1,6 +1,7 @@
 //========= Copyright Valve Corporation ============//
 #include <vrcore/sharedlibtools_public.h>
 #include <string.h>
+#include <config.h>
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -58,5 +59,3 @@ void SharedLib_Unload( SharedLibHandle lib )
 	dlclose( lib );
 #endif
 }
-
-
