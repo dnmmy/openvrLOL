@@ -10,6 +10,7 @@
 #include <locale>
 #include <codecvt>
 #include <cstdarg>
+#include <config.h>
 
 #if !defined( VRCORE_NO_PLATFORM )
 #include <vrcore/assert.h>
@@ -23,9 +24,9 @@
 
 #if defined( OSX ) || defined( LINUX )
 //-----------------------------------------------------------------------------
-// Purpose:  stricmp -> strcasecmp bridge
+// Purpose:  strncmp -> strcasecmp bridge
 //-----------------------------------------------------------------------------
-int stricmp( const char *pStr1, const char *pStr2 )
+int strncmp( const char *pStr1, const char *pStr2 )
 {
 	return strcasecmp( pStr1, pStr2 );
 }
@@ -33,7 +34,7 @@ int stricmp( const char *pStr1, const char *pStr2 )
 //-----------------------------------------------------------------------------
 // Purpose: strincmp -> strncasecmp bridge
 //-----------------------------------------------------------------------------
-int strnicmp( const char *pStr1, const char *pStr2, size_t unBufferLen )
+int strncmp( const char *pStr1, const char *pStr2, size_t unBufferLen )
 {
 	return strncasecmp( pStr1, pStr2, unBufferLen );
 }
@@ -44,7 +45,7 @@ int strnicmp( const char *pStr1, const char *pStr2, size_t unBufferLen )
 //-----------------------------------------------------------------------------
 bool StringHasPrefix( const std::string & sString, const std::string & sPrefix )
 {
-	return 0 == strnicmp( sString.c_str(), sPrefix.c_str(), sPrefix.length() );
+	return 0 == strncmp( sString.c_str(), sPrefix.c_str(), sPrefix.length() );
 }
 
 bool StringHasPrefixCaseSensitive( const std::string & sString, const std::string & sPrefix )
@@ -52,31 +53,30 @@ bool StringHasPrefixCaseSensitive( const std::string & sString, const std::strin
 	return 0 == strncmp( sString.c_str(), sPrefix.c_str(), sPrefix.length() );
 }
 
+bool StringHasSuffix(const std::string& sString, const std::string& sSuffix) {
+    size_t cStrLen = sString.length();
+    size_t cSuffixLen = sSuffix.length();
 
-bool StringHasSuffix( const std::string &sString, const std::string &sSuffix )
-{
-	size_t cStrLen = sString.length();
-	size_t cSuffixLen = sSuffix.length();
+    if (cSuffixLen > cStrLen) {
+        return false;
+    }
 
-	if ( cSuffixLen > cStrLen )
-		return false;
+    std::string sStringSuffix = sString.substr(cStrLen - cSuffixLen, cSuffixLen);
 
-	std::string sStringSuffix = sString.substr( cStrLen - cSuffixLen, cSuffixLen );
-
-	return 0 == stricmp( sStringSuffix.c_str(), sSuffix.c_str() );
+    return 0 == strncmp(sStringSuffix.c_str(), sSuffix.c_str(), cSuffixLen);
 }
 
-bool StringHasSuffixCaseSensitive( const std::string &sString, const std::string &sSuffix )
-{
-	size_t cStrLen = sString.length();
-	size_t cSuffixLen = sSuffix.length();
+bool StringHasSuffixCaseSensitive(const std::string& sString, const std::string& sSuffix) {
+    size_t cStrLen = sString.length();
+    size_t cSuffixLen = sSuffix.length();
 
-	if ( cSuffixLen > cStrLen )
-		return false;
+    if (cSuffixLen > cStrLen) {
+        return false;
+    }
 
-	std::string sStringSuffix = sString.substr( cStrLen - cSuffixLen, cSuffixLen );
+    std::string sStringSuffix = sString.substr(cStrLen - cSuffixLen, cSuffixLen);
 
-	return 0 == strncmp( sStringSuffix.c_str(), sSuffix.c_str(),cSuffixLen );
+    return 0 == strncmp(sStringSuffix.c_str(), sSuffix.c_str(), cSuffixLen);
 }
 
 std::string StringReplace( const std::string &sModify, const std::string &sFind, const std::string &sReplace )
@@ -676,5 +676,3 @@ std::string IpAndPortToString( uint32_t unIpH, uint16_t usPortH )
 	uint8_t *ip = ( uint8_t * )&unIpH;
 	return Format( "%d.%d.%d.%d:%u", ip[ 3 ], ip[ 2 ], ip[ 1 ], ip[ 0 ], usPortH );
 }
-
-
