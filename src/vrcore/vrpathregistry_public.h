@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <config.h>
 
 static const char *k_pchRuntimeOverrideVar = "VR_OVERRIDE";
 static const char *k_pchConfigOverrideVar = "VR_CONFIG_PATH";
