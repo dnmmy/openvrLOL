@@ -1,17 +1,26 @@
 //========= Copyright Valve Corporation ============//
+#undef GetEnvironmentVariable
+#undef SetEnvironmentVariable
+
 #include <vrcore/envvartools_public.h>
 #include <vrcore/strtools_public.h>
 #include <stdlib.h>
 #include <string>
 #include <cctype>
+#include <config.h>
+#include <cstddef>  // For std::size_t
+#include <cstdlib>  // For getenv, setenv, unsetenv
+#include <string>
+#include <cctype>
+#include <cstdio>   // For fprintf
 
 #if defined(_WIN32)
 #include <windows.h>
-
-#undef GetEnvironmentVariable
-#undef SetEnvironmentVariable
 #endif
 
+#ifndef ENVVARTOOLS_PUBLIC_H
+#define ENVVARTOOLS_PUBLIC_H
+#endif // ENVVARTOOLS_PUBLIC_H
 
 std::string GetEnvironmentVariable( const char *pchVarName )
 {
@@ -22,12 +31,12 @@ std::string GetEnvironmentVariable( const char *pchVarName )
 		return "";
 	else
 		return rchValue;
-#elif defined(POSIX)
-	char *pchValue = getenv( pchVarName );
-	if( pchValue )
-		return pchValue;
-	else
-		return "";
+#elif defined(POSIX) || defined(__unix__) || defined(__APPLE__) || defined(__linux__)
+        char *pchValue = getenv( pchVarName );
+        if( pchValue )
+                return pchValue;
+        else
+                return "";
 #else
 #error "Unsupported Platform"
 #endif
@@ -77,12 +86,13 @@ bool SetEnvironmentVariable( const char *pchVarName, const char *pchVarValue )
 {
 #if defined(_WIN32)
 	return 0 != SetEnvironmentVariableA( pchVarName, pchVarValue );
-#elif defined(POSIX)
-	if( pchVarValue == NULL )
-		return 0 == unsetenv( pchVarName );
-	else
-		return 0 == setenv( pchVarName, pchVarValue, 1 );
+#elif defined(POSIX) || defined(__unix__) || defined(__APPLE__) || defined(__linux__)
+    // Check if the current platform matches POSIX, macOS, or Linux
+    if (pchVarValue == NULL)
+        return 0 == unsetenv(pchVarName);
+    else
+        return 0 == setenv(pchVarName, pchVarValue, 1);
 #else
-#error "Unsupported Platform"
+    #error "Unsupported Platform"
 #endif
 }
