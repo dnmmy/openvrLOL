@@ -9,6 +9,7 @@
 #include <vrcore/strtools_public.h>
 #include <vrcore/vrpathregistry_public.h>
 #include <mutex>
+#include <config.h>
 
 using vr::EVRInitError;
 using vr::IVRSystem;
@@ -138,9 +139,9 @@ EVRInitError VR_LoadHmdSystemInternal()
 	}
 
 #if defined( WIN64 )
-	std::string sDLLPath = Path_Join( sTestPath, "vrclient_x64" DYNAMIC_LIB_EXT );
+	std::string sDLLPath = Path_Join( sTestPath, "vrclient_x64" ), DYNAMIC_LIB_EXT;
 #else
-	std::string sDLLPath = Path_Join( sTestPath, "vrclient" DYNAMIC_LIB_EXT );
+	std::string sDLLPath = Path_Join( sTestPath, "vrclient" ) + DYNAMIC_LIB_EXT;
 #endif
 
 	// only look in the override
@@ -350,4 +351,3 @@ const char *VR_GetStringForHmdError( EVRInitError error )
 }
 
 }
-
